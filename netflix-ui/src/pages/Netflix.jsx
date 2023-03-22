@@ -12,10 +12,11 @@ const Netflix = () => {
   };
   return (
     <div>
+     
       <Navbar isScrolled={isScrolled }/>
 
     </div>
   )
 }
 
-export default Netflix
+export default Netflix;
