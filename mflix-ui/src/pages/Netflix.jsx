@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
-import backgroundImage from '../assets/home.jpg'
-import MovieLogo from '../assets/homeTitle.webp'
+import Slider from '../components/Slider'
+import backgroundImage from '../assets/bg1.avif'
+import MovieLogo from '../assets/mlogo.png'
 import { FaPlay } from 'react-icons/fa'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { getGenres } from '../store'  
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchMovies, getGenres } from '../store'  
 
 const Netflix = () => {
   const navigate =useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+  const movies= useSelector((state)=> state.netflix.movies)
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getGenres())
   }, []);
+
+  useEffect(()=>{
+    if(genresLoaded) dispatch(fetchMovies({ type: "all"}));
+  },[genresLoaded])
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
     return () => (window.onscroll = null);
   };
+  //console.log(movies);
   return (
     <Container  >
      
@@ -32,8 +41,8 @@ const Netflix = () => {
       </div>
       <div className="container">
         <div className="logo">
-          <img src={MovieLogo} alt="Movie Logo" />
-        </div>
+            <img src={MovieLogo} alt="Movie Logo" />
+          </div>
         <div className="buttons flex">
           <button className="flex j-center a-center" onClick={()=> navigate('/player')}>
             <FaPlay/>
@@ -45,11 +54,12 @@ const Netflix = () => {
           </button>
         </div>
       </div>
+      <Slider movies={movies}/>
     </Container>
   )
 }
 
-export default Netflix;
+
 
 const Container = styled.div`
 background-color: black;
@@ -102,3 +112,5 @@ background-color: black;
   }
 }
 `;
+
+export default Netflix;
